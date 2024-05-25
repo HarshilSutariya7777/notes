@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:notes/Controller/AuthController.dart';
@@ -15,8 +16,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final CollectionReference mynotes =
-      FirebaseFirestore.instance.collection('notes');
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
   final ThemeController themeController = Get.find();
   AuthController authController = Get.put(AuthController());
   late TextEditingController _searchController;
@@ -35,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = FirebaseAuth.instance;
+    final currentUser = auth.currentUser;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -48,13 +51,23 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               themeController.toggleTheme();
             },
-            icon: Icon(Icons.brightness_6),
+            icon: Icon(
+              themeController.isDarkMode.value
+                  ? Icons.dark_mode
+                  : Icons.brightness_6,
+              color: themeController.isDarkMode.value
+                  ? Colors.black
+                  : Colors.white,
+            ),
           ),
           IconButton(
             onPressed: () {
               authController.logoutUser();
             },
-            icon: Icon(Icons.logout),
+            icon: Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
           ),
         ],
       ),
@@ -94,6 +107,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                filled: true,
+                fillColor: Color(0xffF5F6FA),
               ),
               onChanged: (query) {
                 setState(() {});
@@ -108,7 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: mynotes.snapshots(),
+              stream:
+                  users.doc(currentUser!.uid).collection('notes').snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator());

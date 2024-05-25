@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:notes/Model/NoteModel.dart';
 
 import '../../Controller/ThemeController.dart';
@@ -15,8 +16,10 @@ class NoteScreen extends StatefulWidget {
 }
 
 class _NoteScreenState extends State<NoteScreen> {
-  final CollectionReference mynotes =
-      FirebaseFirestore.instance.collection('notes');
+  // final CollectionReference mynotes =
+  //     FirebaseFirestore.instance.collection('notes');
+  final CollectionReference users =
+      FirebaseFirestore.instance.collection('users');
   TextEditingController title = TextEditingController();
   TextEditingController Content = TextEditingController();
   late Note note;
@@ -87,7 +90,8 @@ class _NoteScreenState extends State<NoteScreen> {
                         if (note.id.isNotEmpty)
                           IconButton(
                             onPressed: () {
-                              mynotes.doc(note.id).delete();
+                              // mynotes.doc(note.id).delete();
+                              deleteNote();
                               Get.back();
                             },
                             icon: Icon(
@@ -147,6 +151,34 @@ class _NoteScreenState extends State<NoteScreen> {
                         ),
                 ),
               ),
+              if (note.createdAt != null || note.updatedAt != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: [
+                      if (note.createdAt != null)
+                        Text(
+                          'Created: ${DateFormat.MMMd().add_jm().format(note.createdAt)}',
+                          style: themeController.isDarkMode.value
+                              ? Theme.of(context).textTheme.labelMedium
+                              : TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                        ),
+                      if (note.updatedAt != null)
+                        Text(
+                          'Updated: ${DateFormat.MMMd().add_jm().format(note.updatedAt)}',
+                          style: themeController.isDarkMode.value
+                              ? Theme.of(context).textTheme.labelMedium
+                              : TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                        ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -159,7 +191,14 @@ class _NoteScreenState extends State<NoteScreen> {
     String userid = auth.currentUser!.uid;
 
     if (note.id.isEmpty) {
-      await mynotes.add({
+      // await mynotes.add({
+      //   'userId': userid,
+      //   'title': titleString,
+      //   'note': noteString,
+      //   'color': color,
+      //   'createdAt': now,
+      // });
+      await users.doc(userid).collection('notes').add({
         'userId': userid,
         'title': titleString,
         'note': noteString,
@@ -167,12 +206,17 @@ class _NoteScreenState extends State<NoteScreen> {
         'createdAt': now,
       });
     } else {
-      await mynotes.doc(note.id).update({
+      await users.doc(userid).collection('notes').doc(note.id).update({
         'title': titleString,
         'note': noteString,
         'color': color,
-        'updatedAt': now,
+        'createdAt': now,
       });
     }
+  }
+
+  void deleteNote() async {
+    String userid = auth.currentUser!.uid;
+    await users.doc(userid).collection('notes').doc(note.id).delete();
   }
 }

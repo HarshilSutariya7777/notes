@@ -20,6 +20,7 @@ class SpleshController extends GetxController {
       Get.to(AuthPage());
     } else {
       Get.to(HomeScreen());
+      Get.offAll(() => HomeScreen());
       print(auth.currentUser!.email);
     }
   }
