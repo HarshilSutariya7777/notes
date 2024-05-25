@@ -12,6 +12,7 @@ class NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find();
+    //formate date
     DateTime displayTime = note.updatedAt.isBefore(note.createdAt)
         ? note.updatedAt
         : note.createdAt;

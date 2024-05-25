@@ -58,7 +58,7 @@ class AuthController extends GetxController {
     Get.to(AuthPage());
   }
 
-  //
+  //store dsata in firestore.
   Future<void> initUser(String email, String name) async {
     try {
       await db.collection("users").doc(auth.currentUser!.uid).set({

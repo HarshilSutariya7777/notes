@@ -3,12 +3,13 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class ThemeController extends GetxController {
+  //stroage theme
   final GetStorage box = GetStorage();
   final String _key = 'isDarkMode';
 
   var isDarkMode = false.obs;
 
-  //
+  //stroage theme
   ThemeController() {
     isDarkMode.value = loadThemeFromBox();
     Get.changeThemeMode(isDarkMode.value ? ThemeMode.dark : ThemeMode.light);

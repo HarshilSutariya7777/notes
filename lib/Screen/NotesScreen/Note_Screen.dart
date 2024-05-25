@@ -151,6 +151,7 @@ class _NoteScreenState extends State<NoteScreen> {
                         ),
                 ),
               ),
+              //show created and updated time
               if (note.createdAt != null || note.updatedAt != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
@@ -186,18 +187,12 @@ class _NoteScreenState extends State<NoteScreen> {
     );
   }
 
+//when user save notes that time store notes in user collection accoding to user.
   void saveNotes() async {
     DateTime now = DateTime.now();
     String userid = auth.currentUser!.uid;
 
     if (note.id.isEmpty) {
-      // await mynotes.add({
-      //   'userId': userid,
-      //   'title': titleString,
-      //   'note': noteString,
-      //   'color': color,
-      //   'createdAt': now,
-      // });
       await users.doc(userid).collection('notes').add({
         'userId': userid,
         'title': titleString,
@@ -215,6 +210,7 @@ class _NoteScreenState extends State<NoteScreen> {
     }
   }
 
+//delete notes
   void deleteNote() async {
     String userid = auth.currentUser!.uid;
     await users.doc(userid).collection('notes').doc(note.id).delete();

@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //collection in database
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
   final ThemeController themeController = Get.find();
@@ -132,6 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 final notes = snapshot.data!.docs;
                 List<NoteCard> noteCards = [];
                 for (var note in notes) {
+                  //show notes in home screen
+                  //fetch data into firestore collection
                   var data = note.data() as Map<String, dynamic>;
                   if (data != null) {
                     String title = data['title'] ?? "";

@@ -12,6 +12,7 @@ class SpleshController extends GetxController {
     SplaceHandle();
   }
 
+//handle splash screen timing
   void SplaceHandle() async {
     await Future.delayed(
       const Duration(seconds: 3),
